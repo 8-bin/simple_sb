@@ -11,7 +11,7 @@ pipeline {
         GITSSHADD = 'git@github.com:8-bin/simple_sb.git'
         GITCREDENTIAL = 'git_cre'
         
-        DOCKERHUB = '8bin/simple_sb_jenkinst_test'
+        DOCKERHUB = '8bin/simple_sb'
         DOCKERHUBCREDENTIAL = 'docker_cre'
     }
 
