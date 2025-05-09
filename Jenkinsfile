@@ -14,7 +14,6 @@ pipeline {
         DOCKERHUB = '8bin/simple_sb'
         DOCKERHUBCREDENTIAL = 'docker_cre'
     }
-
     stages {
         stage('Checkout Github') {
             steps {
@@ -31,7 +30,6 @@ pipeline {
                 }
             }
         }
-
         stage('springboot app build') {
             steps {
                 sh "mvn clean package"
@@ -45,7 +43,6 @@ pipeline {
                 }
             }
         }
-
         stage('docker image build') {
             steps {
                 sh "docker build -t ${DOCKERHUB}:${currentBuild.number} ."
@@ -63,7 +60,6 @@ pipeline {
                 }
             }
         }
-
         stage('docker image push') {
             steps {
                 withDockerRegistry(credentialsId: DOCKERHUBCREDENTIAL, url: '') {
@@ -83,6 +79,28 @@ pipeline {
                     sh "docker image rm -f ${DOCKERHUB}:latest"
                     sh "echo push success"
                     // 성공하든 실패하든 로컬에 있는 도커이미지는 삭제
+                }
+            }
+        stage('EKS manifest file update') {
+            steps {
+                git credentialsId: GITCREDENTIAL, url: GITSSHADD, branch: 'main'
+                sh "git config --global user.email ${GITEMAIL}"
+                sh "git config --global user.name ${GITNAME}"
+                sh "sed -i 's@${DOCKERHUB}:.*@${DOCKERHUB}:${currentBuild.number}@g' fast.yml"
+
+                sh "git add ."
+                sh "git branch -M main"
+                sh "git commit -m 'fixed tag ${currentBuild.number}'"
+                sh "git remote remove origin"
+                sh "git remote add origin ${GITSSHADD}"
+                sh "git push origin main"
+            }
+            post {
+                failure {
+                    sh "echo manifest update failed"
+                }
+                success {
+                    sh "echo manifest update success"
                 }
             }
         }
