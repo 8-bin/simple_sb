@@ -8,7 +8,7 @@ pipeline {
         GITNAME = '8-bin'            
         GITEMAIL = 'taeho.kim0218@gmail.com' 
         GITWEBADD = 'https://github.com/8-bin/simple_sb.git'
-        GITSSHADD = 'git@github.com:8-bin/simple_sb.git'
+        GITSSHADD = 'git@github.com:8-bin/argo-test-deploy.git'
         GITCREDENTIAL = 'git_cre'
         
         DOCKERHUB = '8bin/simple_sb'
@@ -87,7 +87,7 @@ pipeline {
                 git credentialsId: GITCREDENTIAL, url: GITSSHADD, branch: 'main'
                 sh "git config --global user.email ${GITEMAIL}"
                 sh "git config --global user.name ${GITNAME}"
-                sh "sed -i 's@${DOCKERHUB}:.*@${DOCKERHUB}:${currentBuild.number}@g' fast.yml"
+                sh "sed -i 's@${DOCKERHUB}:.*@${DOCKERHUB}:${currentBuild.number}@g' deployment.yml"
 
                 sh "git add ."
                 sh "git branch -M main"
