@@ -81,6 +81,7 @@ pipeline {
                     // 성공하든 실패하든 로컬에 있는 도커이미지는 삭제
                 }
             }
+        }    
         stage('EKS manifest file update') {
             steps {
                 git credentialsId: GITCREDENTIAL, url: GITSSHADD, branch: 'main'
